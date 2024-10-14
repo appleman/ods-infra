@@ -1,0 +1,50 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 9092  # Broker 1 Plaintext
+        hostPort: 9092
+        protocol: TCP
+      - containerPort: 9093  # Broker 1 TLS
+        hostPort: 9093
+        protocol: TCP
+
+  - role: worker
+    extraMounts:
+      - hostPath: /Users/jugeshprasad/Projects/online-data-exploration/infra/node1-pv
+        containerPath: /mnt/data
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "prasadjads.com/instancegroup=hermes-kafka"
+
+  - role: worker
+    extraMounts:
+      - hostPath: /Users/jugeshprasad/Projects/online-data-exploration/infra/node2-pv
+        containerPath: /mnt/data
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "prasadjads.com/instancegroup=hermes-kafka"
+
+  - role: worker
+    extraMounts:
+      - hostPath: /Users/jugeshprasad/Projects/online-data-exploration/infra/node3-pv
+        containerPath: /mnt/data
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "prasadjads.com/instancegroup=hermes-kafka"
